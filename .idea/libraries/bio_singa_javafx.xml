@@ -1,6 +1,9 @@
 <component name="libraryTable">
   <library name="bio.singa.javafx" type="repository">
     <properties maven-id="bio.singa:singa-javafx:0.7.0" />
+    <ANNOTATIONS>
+      <root url="file://$USER_HOME$/Desktop/all my shit/fx/javafx-sdk-21.0.1/lib" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/bio/singa/singa-javafx/0.7.0/singa-javafx-0.7.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/11/javafx-controls-11.jar!/" />

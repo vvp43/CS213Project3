@@ -17,6 +17,8 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="bio.singa.javafx" level="project" />
+    <orderEntry type="library" exported="" name="bio.singa.javafx" level="project" />
+    <orderEntry type="library" exported="" name="openjfx.javafx.base" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
