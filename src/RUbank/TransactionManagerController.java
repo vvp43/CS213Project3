@@ -5,9 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 public class TransactionManagerController {
 
     @FXML
@@ -62,7 +59,14 @@ public class TransactionManagerController {
     private ToggleGroup tgLocation;
 
     @FXML
+    private Button clearAll;
+
+    @FXML
+    private TextField balance;
+
+    @FXML
     void initialize(){
+        AccountDatabase accountDatabase = new AccountDatabase();
         locationTypeChooserGridPane.setDisable(true);
         locationTypeChooserGridPane.setDisable(true);
         tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -85,6 +89,13 @@ public class TransactionManagerController {
                 loyalCustomerButton.setDisable(!"savingsButtonClick".equals(selectedButtonId));
             }
         });
+        openButton.setOnAction(event -> {
+            if(openAccountButton() != null){
+                System.out.println("created!");
+                accountDatabase.open(openAccountButton());
+                accountDatabase.printSorted();
+            }
+        });
 
     }
     @FXML
@@ -92,41 +103,154 @@ public class TransactionManagerController {
 
     }
     @FXML
-    void openAccountButton(ActionEvent event) {
-        System.out.println(firstName.getText());
-        System.out.println(lastName.getText());
+    Account openAccountButton() {
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty()){
+            if(dateOfBirth.getValue() != null){
+                Date a = createDateFromString(dateOfBirth.getValue().toString());
+                if(checkingButtonClick.isSelected()){
+                    return addCheck(a);
+                }
+                else if(collegeCheckingButtonClick.isSelected()){
+                    return addCollegeCheck(a);
+                }
+                else if(savingsButtonClick.isSelected()){
+                    return addSavings(a);
+                }
+                else if(moneyMarketButtonClick.isSelected()){
+                    return addMM(a);
+                }
+            } else {
 
-        if(checkingButtonClick.isSelected()){
-            System.out.println("chjecking  selecetd!");
-        }
-        else if(collegeCheckingButtonClick.isSelected()){
-            if(newarkButton.isSelected()){
-                System.out.println("newy selected");
             }
-            else if(newBrunswickButton.isSelected()){
-                System.out.println("newy brunswy selected");
-            }
-            else if(camdenButton.isSelected()){
-                System.out.println("cammy selected");
-            }
-            else {
-                System.out.println("select a campus!");
-            }
+        } else {
+            textArea.appendText("Missing data for opening an account\n");
         }
-        else if(savingsButtonClick.isSelected()){
-            System.out.println("savings are selected!");
-        }
-        else if(moneyMarketButtonClick.isSelected()){
-            System.out.println("moneymarket selected!");
-        }
-        else{
-            System.out.println("nothing is selecrted");
-        }
+        return null;
     }
     @FXML
     void setCustomerStatusYes(ActionEvent event) {
         loyalCustomerButton.setSelected(true);
         loyalCustomerButton.setDisable(true);
+    }
+
+    @FXML
+    void clearOptions(ActionEvent event) {
+        firstName.setText("");
+        lastName.setText("");
+        dateOfBirth.setValue(null);
+        tgAccountType.selectToggle(null);
+        tgLocation.selectToggle(null);
+    }
+    public static boolean isValidDouble(String input) {
+        if (input == null) {
+            return false;
+        }
+        try {
+            Double.parseDouble(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    private Date createDateFromString(String date) { // need to catch exception wher e  integers cant beparsed
+        //Split date string into array contains month, day, year
+        String[] dateArr = date.split("-");
+        int year = Integer.parseInt(dateArr[0]);
+        int month = Integer.parseInt(dateArr[1]);
+        int day = Integer.parseInt(dateArr[2]);
+
+
+        //Create Date object and return
+        return new Date(year, month, day);
+    }
+
+    private Account addCheck(Date a){
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
+            if (isValidDouble(balance.getText())) {
+                if (Double.parseDouble(balance.getText()) > 0) {
+                    return new Checking(prof, Double.parseDouble(balance.getText()));
+                } else {
+                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid()+"\n");
+        }
+        return null;
+    }
+
+    private Account addCollegeCheck(Date a){
+        Campus campus = null;
+        if(newarkButton.isSelected()){
+            campus = Campus.NEWARK;
+        } else if(newBrunswickButton.isSelected()){
+            campus = Campus.NEW_BRUNSWICK;
+        } else if(camdenButton.isSelected()){
+            campus = Campus.CAMDEN;
+        } else {
+            System.out.println("Invalid campus!");
+            return null;
+        }
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
+            if (isValidDouble(balance.getText())) {
+                if (Double.parseDouble(balance.getText()) > 0) {
+                    return new CollegeChecking(prof, Double.parseDouble(balance.getText()), campus);
+                } else {
+                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid()+"\n");
+        }
+        return null;
+    }
+    private Account addSavings(Date a){
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
+            if (isValidDouble(balance.getText())) {
+                if (Double.parseDouble(balance.getText()) > 0) {
+                    if(loyalCustomerButton.isSelected()){
+                        return new Savings(prof, Double.parseDouble(balance.getText()), true);
+                    } else {
+                        return new Savings(prof, Double.parseDouble(balance.getText()), false);
+                    }
+                } else {
+                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid()+"\n");
+        }
+        return null;
+    }
+    private Account addMM(Date a){
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
+            if (isValidDouble(balance.getText())) {
+                if (Double.parseDouble(balance.getText()) > 0) {
+                    if(Double.parseDouble(balance.getText()) >= 2000) {
+                        return new MoneyMarket(prof, Double.parseDouble(balance.getText()), true, 0);
+                    } else{
+                        textArea.appendText("Minimum of $2000 to open a Money Market account.\n");
+                    }
+                } else {
+                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid()+"\n");
+        }
+        return null;
     }
 
 

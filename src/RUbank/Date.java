@@ -265,7 +265,7 @@ public class Date implements Comparable<Date> {
      * isValid() method: Checks if an event is valid meaning within 6 months, cannot be in the future, and is an actual date possible.
      * @return true if all conditions above are met, otherwise false
      */
-    public boolean isValid() {
+    public String isValid() {
         int y = this.year;
         int m = this.month;
         int d = this.day;
@@ -275,21 +275,18 @@ public class Date implements Comparable<Date> {
             if (!currentDay(thisEvent) && !isFutureDate(thisEvent)) {
                 //System.out.println("bru");
                 if (!isUnder16(thisEvent)) {
-                    return true;
+                    return "";
                 }
                 else{
-                    System.out.println("DOB invalid: " + m + "/" + d + "/" + y + " under 16.");
-                    return false;
+                    return "DOB invalid: "+ m + "/" + d + "/" + y + " under 16.";
 
                 }
             } else {
-                System.out.println("DOB invalid: " + m + "/" + d + "/" + y + " cannot be today or a future day.");
-                return false;
+                return "DOB invalid: " + m + "/" + d + "/" + y + " cannot be today or a future day.";
             }
         }
         else{
-            System.out.println("DOB invalid: " + m + "/" + d + "/" + y + " not a valid calendar date!");
-            return false;
+            return "DOB invalid: " + m + "/" + d + "/" + y + " not a valid calendar date!";
         }
     }
 

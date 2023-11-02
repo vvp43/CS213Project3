@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,5 +23,6 @@ public class TransactionManagerMain extends Application{
         stage.setTitle("Project 3 - Transaction Manager");
         stage.setScene(scene);
         stage.show();
+
     }
 }

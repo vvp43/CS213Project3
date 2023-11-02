@@ -200,7 +200,7 @@ public class TransactionManager {
             System.out.println("Minimum of $2000 to open a Money Market account.");
             return;
         }
-        if(!a.holder.getDob().isValid()){
+        if(!a.holder.getDob().isValid().isEmpty()){
             return;
         }
         if(a.getClass() == CollegeChecking.class && !a.holder.getDob().isUnder24()){
@@ -272,7 +272,7 @@ public class TransactionManager {
     private void operationC(Account a, AccountDatabase ad) {
         //Create Date object
         //Check if any elements of event is invalid and display error message
-        if (!a.holder.getDob().isValid()) {
+        if (!a.holder.getDob().isValid().isEmpty()) {
             return;
         }
         updateAccountForOperations(a, ad);
