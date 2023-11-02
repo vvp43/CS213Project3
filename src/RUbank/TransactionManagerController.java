@@ -67,28 +67,11 @@ public class TransactionManagerController {
     @FXML
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();
-        locationTypeChooserGridPane.setDisable(true);
-        locationTypeChooserGridPane.setDisable(true);
-        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                String selectedButtonId = ((ToggleButton) newValue).getId();
-                locationTypeChooserGridPane.setDisable(!"collegeCheckingButtonClick".equals(selectedButtonId));
-            }
-        });
         loyalCustomerButton.setDisable(true);
-        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                String selectedButtonId = ((ToggleButton) newValue).getId();
-                loyalCustomerButton.setDisable(!"moneyMarketButtonClick".equals(selectedButtonId));
-            }
-        });
-        loyalCustomerButton.setDisable(true);
-        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                String selectedButtonId = ((ToggleButton) newValue).getId();
-                loyalCustomerButton.setDisable(!"savingsButtonClick".equals(selectedButtonId));
-            }
-        });
+        toggleCampus();
+        toggleMM();
+        toggleSavings();
+
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
                 Account a = openAccountButton();
@@ -100,6 +83,33 @@ public class TransactionManagerController {
             }
         });
 
+    }
+
+    private void toggleCampus(){
+        locationTypeChooserGridPane.setDisable(true);
+        locationTypeChooserGridPane.setDisable(true);
+        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String selectedButtonId = ((ToggleButton) newValue).getId();
+                locationTypeChooserGridPane.setDisable(!"collegeCheckingButtonClick".equals(selectedButtonId));
+            }
+        });
+    }
+    private void toggleMM(){
+        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String selectedButtonId = ((ToggleButton) newValue).getId();
+                loyalCustomerButton.setDisable(!"moneyMarketButtonClick".equals(selectedButtonId));
+            }
+        });
+    }
+    private void toggleSavings(){
+        tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String selectedButtonId = ((ToggleButton) newValue).getId();
+                loyalCustomerButton.setDisable(!"savingsButtonClick".equals(selectedButtonId));
+            }
+        });
     }
     @FXML
     void onCollegeCheckingButtonClick(ActionEvent event) {
