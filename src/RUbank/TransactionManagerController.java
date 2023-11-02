@@ -91,7 +91,10 @@ public class TransactionManagerController {
         });
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
-                System.out.println("created!");
+                Account a = openAccountButton();
+                if(accountDatabase.contains(a)){
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is already in the database.\n");
+                }
                 accountDatabase.open(openAccountButton());
                 accountDatabase.printSorted();
             }
@@ -249,6 +252,25 @@ public class TransactionManagerController {
             textArea.appendText(a.isValid()+"\n");
         }
         return null;
+    }
+
+
+
+
+
+    public String typeCheckCharacterReturn(Account a){
+        if(a.getClass() == Checking.class){
+            return "(C)";
+        }
+        else if(a.getClass() == CollegeChecking.class){
+            return "(CC)";
+        }
+        else if(a.getClass() == Savings.class){
+            return "(S)";
+        }
+        else{
+            return "(MM)";
+        }
     }
 
 
