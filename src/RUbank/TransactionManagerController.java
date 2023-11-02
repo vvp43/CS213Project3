@@ -104,7 +104,7 @@ public class TransactionManagerController {
     }
     @FXML
     Account openAccountButton() {
-        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty()){
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null){
             if(dateOfBirth.getValue() != null){
                 Date a = createDateFromString(dateOfBirth.getValue().toString());
                 if(checkingButtonClick.isSelected()){
@@ -119,11 +119,9 @@ public class TransactionManagerController {
                 else if(moneyMarketButtonClick.isSelected()){
                     return addMM(a);
                 }
-            } else {
-
             }
         } else {
-            textArea.appendText("Missing data for opening an account\n");
+            textArea.appendText("Missing data for opening an account.\n");
         }
         return null;
     }
