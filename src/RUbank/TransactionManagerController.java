@@ -75,11 +75,13 @@ public class TransactionManagerController {
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
                 Account a = openAccountButton();
-                if(accountDatabase.contains(a)){
+                if(accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)){
                     textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is already in the database.\n");
                 }
-                accountDatabase.open(openAccountButton());
-                accountDatabase.printSorted();
+                else{
+                    accountDatabase.open(openAccountButton());
+                    accountDatabase.printSorted();
+                }
             }
         });
 
@@ -282,6 +284,22 @@ public class TransactionManagerController {
             return "(MM)";
         }
     }
-
+    public boolean checkIfCandCCExist(Account a, AccountDatabase ad){
+        Account[] list = ad.getAccounts();
+        if(list!=null) {
+            if (a.getClass() == CollegeChecking.class || a.getClass() == Checking.class) {
+                for (Account acc : list) {
+                    if (acc != null) {
+                        if (acc.holder.equals(a.holder) && acc.getClass() == Checking.class) {
+                            return true;
+                        } else if (acc.holder.equals(a.holder) && acc.getClass() == CollegeChecking.class) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 }
