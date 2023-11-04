@@ -65,24 +65,37 @@ public class TransactionManagerController {
     private TextField balance;
 
     @FXML
+    private Button closeButton;
+    @FXML
+    private Button LoadAccountButton;
+    @FXML
+    private Button printFeesAndInterestsButton;
+    @FXML
+    private Button printSortedButton;
+    @FXML
+    private Button printUpdatedButton;
+
+
+    @FXML
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();
         loyalCustomerButton.setDisable(true);
         toggleCampus();
         toggleMM();
         toggleSavings();
+        openAcc(accountDatabase);
+        closeAcc(accountDatabase);
 
-        openButton.setOnAction(event -> {
-            if(openAccountButton() != null){
-                Account a = openAccountButton();
-                if(accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)){
-                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is already in the database.\n");
-                }
-                else{
-                    accountDatabase.open(openAccountButton());
-                    accountDatabase.printSorted();
-                }
-            }
+        printSortedButton.setOnAction(event -> {
+            textArea.appendText(accountDatabase.printSorted());
+        });
+
+        printFeesAndInterestsButton.setOnAction(event -> {
+            textArea.appendText(accountDatabase.printFeesAndInterests());
+        });
+
+        printUpdatedButton.setOnAction(event -> {
+            textArea.appendText(accountDatabase.printSorted());
         });
 
     }
@@ -113,14 +126,49 @@ public class TransactionManagerController {
             }
         });
     }
+    private void openAcc(AccountDatabase accountDatabase){
+        openButton.setOnAction(event -> {
+            if(openAccountButton() != null){
+                Account a = openAccountButton();
+                if(accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)){
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is already in the database.\n");
+                }
+                else{
+                    accountDatabase.open(a);
+                    //textArea.appendText(accountDatabase.printSorted()+"\n");
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" opened.\n");
+
+                }
+            }
+        });
+    }
+    private void closeAcc(AccountDatabase accountDatabase) {
+        closeButton.setOnAction(event -> {
+            if(closeAccount() != null){
+                Account a = closeAccount();
+                updateAccountForOperations(a, accountDatabase);
+                if(accountDatabase.close(a)){
+                    accountDatabase.close(a);
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" has been closed.\n");
+                    accountDatabase.printSorted();
+
+                }
+                else{
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is not in the database.\n");
+                }
+            }
+        });
+    }
+
     @FXML
     void onCollegeCheckingButtonClick(ActionEvent event) {
 
     }
+
     @FXML
     Account openAccountButton() {
-        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null){
-            if(dateOfBirth.getValue() != null){
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null
+            && dateOfBirth.getValue() != null){
                 Date a = createDateFromString(dateOfBirth.getValue().toString());
                 if(checkingButtonClick.isSelected()){
                     return addCheck(a);
@@ -133,10 +181,35 @@ public class TransactionManagerController {
                 }
                 else if(moneyMarketButtonClick.isSelected()){
                     return addMM(a);
+                } else {
+                    textArea.appendText("Missing data for opening an account.\n");
                 }
-            }
         } else {
             textArea.appendText("Missing data for opening an account.\n");
+        }
+        return null;
+    }
+    @FXML
+    Account closeAccount() {
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null
+                && dateOfBirth.getValue() != null){
+            Date a = createDateFromString(dateOfBirth.getValue().toString());
+                if(a.isValid().isEmpty()) {
+                    Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
+                    if (checkingButtonClick.isSelected()) {
+                        return new Checking(prof, 0);
+                    } else if (collegeCheckingButtonClick.isSelected()) {
+                        return new CollegeChecking(prof, 0, null);
+                    } else if (savingsButtonClick.isSelected()) {
+                        return new Savings(prof, 0, true);
+                    } else if (moneyMarketButtonClick.isSelected()) {
+                        return new MoneyMarket(prof, 0,true, 0);
+                    } else {
+                        textArea.appendText("Missing data for opening an account.\n");
+                    }
+                } else {
+                    textArea.appendText(a.isValid() + "\n");
+                }
         }
         return null;
     }
@@ -194,6 +267,9 @@ public class TransactionManagerController {
         }
         return null;
     }
+    private Account closeCC(Profile b){
+        return null;
+    }
 
     private Account addCollegeCheck(Date a){
         Campus campus = null;
@@ -204,7 +280,7 @@ public class TransactionManagerController {
         } else if(camdenButton.isSelected()){
             campus = Campus.CAMDEN;
         } else {
-            System.out.println("Invalid campus!");
+            textArea.appendText("Invalid campus!\n");
             return null;
         }
         if(a.isValid().isEmpty()) {
@@ -300,6 +376,40 @@ public class TransactionManagerController {
             }
         }
         return false;
+    }
+
+    private void updateAccountForOperations(Account a, AccountDatabase ad){
+        Account[] list = ad.getAccounts();
+        if(list != null) {
+            if (a.getClass() == CollegeChecking.class) {
+                for (Account acc : list) {
+                    if (acc != null) {
+                        if (acc.getClass() == CollegeChecking.class && acc.holder.equals(a.holder)) {
+                            ((CollegeChecking) a).setCampus(((CollegeChecking) acc).getCampus());
+                        }
+                    }
+                }
+            }
+            else if(a.getClass() == Savings.class){
+                for (Account acc : list) {
+                    if (acc != null) {
+                        if (acc.getClass() == Savings.class && acc.holder.equals(a.holder)) {
+                            ((Savings) a).setIsLoyal(((Savings) acc).getIsLoyal());
+                        }
+                    }
+                }
+            }
+            else if(a.getClass() == MoneyMarket.class){
+                for (Account acc : list) {
+                    if (acc != null) {
+                        if (acc.getClass() == MoneyMarket.class && acc.holder.equals(a.holder)) {
+                            ((MoneyMarket) a).setIsLoyal(((MoneyMarket) acc).getIsLoyal());
+                            ((MoneyMarket) a).setWithdrawal(((MoneyMarket) acc).getWithdrawal());
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

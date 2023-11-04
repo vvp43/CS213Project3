@@ -261,7 +261,8 @@ public class AccountDatabase {
     /**
      * printSorted() method: sorts the current accounts[] array by account type and profile then prints it
      */
-    public void printSorted() {
+    public String printSorted() {
+        String output = "*Accounts sorted by account type and profile.\n";
         if(accounts[0] != null) {
             Account[] copy = new Account[numAcct];
             // copy array first
@@ -271,22 +272,23 @@ public class AccountDatabase {
                 }
             }
             sort(copy);
-            System.out.println("*Accounts sorted by account type and profile.");
             for (Account a : copy) {
                 if (a != null) {
-                    System.out.println(a.toString());
+                    output = output.concat(a.toString()+"\n");
                 }
             }
-            System.out.println("*end of list.");
+            output = output.concat("*end of list.\n");
+            return output;
         }
+        return null;
     } //sort by account type and profile
 
     /**
      * printFeesAndInterests() method: sorts the current accounts[] array by account type and profile, then adds
      * their respective monthly interest and fees at the end of the string, then prints.
      */
-    public void printFeesAndInterests() {
-        DecimalFormat df = new DecimalFormat("#,##0.00");
+    public String printFeesAndInterests() {
+        String output = "*list of accounts with fee and monthly interest\n";
         if(accounts[0] != null) {
             Account[] copy = new Account[numAcct];
             // copy array first
@@ -296,26 +298,26 @@ public class AccountDatabase {
                 }
             }
             sort(copy);
-            System.out.println("*list of accounts with fee and monthly interest");
             for (Account a : copy) {
                 if (a != null) {
-                    System.out.println(a.toString()+"::fee $"+df.format(a.monthlyFee())+"::monthly interest $"+df.format(a.monthlyInterest()));
+                    output = output.concat(a.toString()+"::fee $"+(a.monthlyFee())+"::monthly interest $"+(a.monthlyInterest())+"\n");
                 }
             }
-            System.out.println("*end of list.");
+            output = output.concat("*end of list.\n");
+            return output;
         }
-
+        return null;
     } //calculate interests/fees
 
     /**
      * printUpdatedBalances() method: applies monthly interests and fees to accounts, then sorts by account type and
      * profile, then prints.
      */
-    public void printUpdatedBalances() {
-        DecimalFormat df = new DecimalFormat("#,###.00");
+    public String printUpdatedBalances() {
+        String output = "*list of accounts with fees and interests applied.\n";
         if(this.accounts == null) {
-            System.out.println("Account Database is empty!");
-            return;
+            output = "Account Database is empty!";
+            return output;
         }
         if(accounts[0] != null && numAcct != 0) {
             for (Account a : accounts) {
@@ -332,13 +334,13 @@ public class AccountDatabase {
             }
         }
         sort(copy);
-        System.out.println("*list of accounts with fees and interests applied.");
         for (Account a : copy) {
             if (a != null) {
-                System.out.println(a.toString());
+                output = output.concat(a.toString());
             }
         }
-        System.out.println("*end of list.");
+        output = output.concat("*end of list.\n");
+        return output;
 
     } //apply the interests/fees
 
