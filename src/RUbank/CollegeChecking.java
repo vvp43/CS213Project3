@@ -50,6 +50,7 @@ public class CollegeChecking extends Checking {
     public void applyMonthlyInterestsAndFees(){
         balance-=monthlyFee();
         balance+=monthlyInterest();
+        formatBal();
     }
 
     /**

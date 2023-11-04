@@ -79,8 +79,6 @@ public class TransactionManagerController {
     @FXML
     private CheckBox loyalCustomerButton;
 
-    @FXML
-    private CheckBox loyalCustomerButton1;
 
     @FXML
     private RadioButton moneyMarketButtonClick;
@@ -136,12 +134,11 @@ public class TransactionManagerController {
     @FXML
     private ToggleGroup tgLocation1;
 
-
     @FXML
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();
         loyalCustomerButton.setDisable(true);
-        togglefirst();
+        toggleOpenTab();
 
         openAcc(accountDatabase);
 
@@ -149,7 +146,9 @@ public class TransactionManagerController {
 
         initPrints(accountDatabase);
 
+        toggleDepositTab();
 
+        dep(accountDatabase);
 
     }
 
@@ -166,7 +165,7 @@ public class TransactionManagerController {
             textArea.appendText(accountDatabase.printSorted());
         });
     }
-    private void togglefirst(){
+    private void toggleOpenTab(){
         locationTypeChooserGridPane.setDisable(true);
         locationTypeChooserGridPane.setDisable(true);
         tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -185,6 +184,15 @@ public class TransactionManagerController {
             if (newValue != null) {
                 String selectedButtonId = ((ToggleButton) newValue).getId();
                 loyalCustomerButton.setDisable(!"savingsButtonClick".equals(selectedButtonId));
+            }
+        });
+    }
+    private void toggleDepositTab(){
+        locationTypeChooserGridPane1.setDisable(true);
+        tgAccountType1.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String selectedButtonId = ((ToggleButton) newValue).getId();
+                locationTypeChooserGridPane1.setDisable(!"collegeCheckingButtonClick1".equals(selectedButtonId));
             }
         });
     }
@@ -213,7 +221,23 @@ public class TransactionManagerController {
                 if(accountDatabase.close(a)){
                     accountDatabase.close(a);
                     textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" has been closed.\n");
-                    accountDatabase.printSorted();
+
+                }
+                else{
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is not in the database.\n");
+                }
+            }
+        });
+    }
+    private void dep(AccountDatabase accountDatabase) {
+        openButton1.setOnAction(event -> {
+            if(depositButton() != null){
+                Account a = depositButton();
+                updateAccountForOperations(a, accountDatabase);
+                System.out.println("looking for "+a.toString()+"\n");
+                if(accountDatabase.contains(a)){
+                    accountDatabase.deposit(a);
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" Deposit - balance updated.\n");
 
                 }
                 else{
@@ -273,9 +297,50 @@ public class TransactionManagerController {
                 } else {
                     textArea.appendText(a.isValid() + "\n");
                 }
+        } else {
+            textArea.appendText("Missing data for opening an account.\n");
         }
         return null;
     }
+    @FXML
+    Account depositButton() {
+        if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getValue() != null
+                && dateOfBirth1.getValue() != null){
+            Date a = createDateFromString(dateOfBirth1.getValue().toString());
+            if(a.isValid().isEmpty()) {
+                Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
+                if (isValidDouble(balance1.getText())) {
+                    if (Double.parseDouble(balance1.getText()) > 0) {
+                        if (checkingButtonClick1.isSelected()) {
+                            return new Checking(prof, Double.parseDouble(balance1.getText()));
+                        } else if (collegeCheckingButtonClick1.isSelected()) {
+                            return new CollegeChecking(prof, Double.parseDouble(balance1.getText()), null);
+                        } else if (savingsButtonClick1.isSelected()) {
+                            return new Savings(prof, Double.parseDouble(balance1.getText()), true);
+                        } else if (moneyMarketButtonClick1.isSelected()) {
+                            return new MoneyMarket(prof, Double.parseDouble(balance1.getText()),true, 0);
+                        } else {
+                            textArea.appendText("Missing data for opening an account.\n");
+                        }
+                    } else {
+                        textArea.appendText("Deposit - amount cannot be 0 or negative.\n");
+                    }
+                } else {
+                    textArea.appendText("Not a valid amount.\n");
+                }
+            } else {
+                textArea.appendText(a.isValid() + "\n");
+            }
+        } else {
+            textArea.appendText("Missing data for opening an account.\n");
+        }
+        return null;
+    }
+    @FXML
+    Account withdrawButton() {
+        return null;
+    }
+
     @FXML
     void setCustomerStatusYes(ActionEvent event) {
         loyalCustomerButton.setSelected(true);
@@ -328,9 +393,6 @@ public class TransactionManagerController {
         } else {
             textArea.appendText(a.isValid()+"\n");
         }
-        return null;
-    }
-    private Account closeCC(Profile b){
         return null;
     }
 

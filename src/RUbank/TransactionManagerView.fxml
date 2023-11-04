@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RUbank.TransactionManagerController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="737.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="RUbank.TransactionManagerController">
    <top>
       <TabPane prefHeight="444.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -63,7 +63,7 @@
                                           <ToggleGroup fx:id="tgAccountType" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="collegeCheckingButtonClick" mnemonicParsing="false" onAction="#onCollegeCheckingButtonClick" prefHeight="51.0" prefWidth="121.0" text="College Checking" toggleGroup="$tgAccountType" GridPane.columnIndex="1" />
+                                    <RadioButton fx:id="collegeCheckingButtonClick" mnemonicParsing="false" prefHeight="51.0" prefWidth="121.0" text="College Checking" toggleGroup="$tgAccountType" GridPane.columnIndex="1" />
                                     <RadioButton fx:id="checkingButtonClick" mnemonicParsing="false" text="Checking" toggleGroup="$tgAccountType" />
                                     <RadioButton fx:id="moneyMarketButtonClick" mnemonicParsing="false" onAction="#setCustomerStatusYes" prefHeight="23.0" prefWidth="117.0" text="Money Market" toggleGroup="$tgAccountType" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
@@ -151,12 +151,11 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <RadioButton fx:id="savingsButtonClick1" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Savings" GridPane.rowIndex="2" />
-                                    <RadioButton fx:id="collegeCheckingButtonClick1" mnemonicParsing="false" onAction="#onCollegeCheckingButtonClick" prefHeight="51.0" prefWidth="121.0" text="College Checking" GridPane.columnIndex="1">
+                                    <RadioButton fx:id="savingsButtonClick1" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Savings" GridPane.rowIndex="2">
                                        <toggleGroup>
                                           <ToggleGroup fx:id="tgAccountType1" />
-                                       </toggleGroup>
-                                    </RadioButton>
+                                       </toggleGroup></RadioButton>
+                                    <RadioButton fx:id="collegeCheckingButtonClick1" mnemonicParsing="false" onAction="#onCollegeCheckingButtonClick" prefHeight="51.0" prefWidth="121.0" text="College Checking" toggleGroup="$tgAccountType1" GridPane.columnIndex="1" />
                                     <RadioButton fx:id="checkingButtonClick1" mnemonicParsing="false" text="Checking" toggleGroup="$tgAccountType1" />
                                     <RadioButton fx:id="moneyMarketButtonClick1" mnemonicParsing="false" onAction="#setCustomerStatusYes" prefHeight="23.0" prefWidth="117.0" text="Money Market" toggleGroup="$tgAccountType1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                  </children>
@@ -189,18 +188,17 @@
                                           <RadioButton fx:id="newarkButton1" mnemonicParsing="false" text="Newark" toggleGroup="$tgLocation1" GridPane.rowIndex="2" />
                                        </children>
                                     </GridPane>
-                                    <CheckBox fx:id="loyalCustomerButton1" mnemonicParsing="false" text="CheckBox" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
-                                    <Button fx:id="openButton1" mnemonicParsing="false" onAction="#openAccountButton" prefHeight="25.0" prefWidth="90.0" text="Open" />
-                                    <Button fx:id="closeButton1" mnemonicParsing="false" onAction="#closeAccount" prefHeight="25.0" prefWidth="90.0" text="Close" />
+                                    <Button fx:id="openButton1" mnemonicParsing="false" onAction="#openAccountButton" prefHeight="25.0" prefWidth="90.0" text="Deposit" />
+                                    <Button fx:id="closeButton1" mnemonicParsing="false" onAction="#closeAccount" prefHeight="25.0" prefWidth="90.0" text="Withdraw" />
                                  </children>
                               </HBox>
                               <Button fx:id="clearAll1" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#clearOptions" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                               <TextField fx:id="balance1" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label text="Balance" GridPane.rowIndex="4" />
+                              <Label text="Amount" GridPane.rowIndex="4" />
                            </children>
                         </GridPane>
                      </children></AnchorPane>
@@ -233,6 +231,6 @@
       </TabPane>
    </top>
    <bottom>
-      <TextArea fx:id="textArea" prefHeight="183.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+      <TextArea fx:id="textArea" prefHeight="338.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>

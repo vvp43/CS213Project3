@@ -98,6 +98,7 @@ public class MoneyMarket extends Savings{
         balance-=monthlyFee();
         balance+=monthlyInterest();
         withdrawal = 0;
+        formatBal();
     }
 
     /**

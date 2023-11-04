@@ -31,6 +31,14 @@ public abstract class Account implements Comparable<Account>{
     public void applyMonthlyInterestsAndFees(){
         balance+=monthlyInterest();
         balance-=monthlyFee();
+        formatBal();
+    }
+    /**
+     * formatBal() method: reformates balance to proper decimal
+     */
+    public void formatBal(){
+        DecimalFormat df = new DecimalFormat("#,###.00");
+        df.format(balance);
     }
 
     /**
