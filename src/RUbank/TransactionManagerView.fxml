@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
@@ -46,7 +45,6 @@
                               <Label text="Last Name" GridPane.rowIndex="1" />
                               <Label text="Date of Birth" GridPane.rowIndex="2" />
                               <Label text="Account Type" GridPane.rowIndex="3" />
-                              <DatePicker fx:id="dateOfBirth" prefHeight="25.0" prefWidth="174.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <GridPane fx:id="accountTypeChooserGridPane" prefHeight="114.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="87.0" />
@@ -108,6 +106,7 @@
                               <Button fx:id="clearAll" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#clearOptions" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                               <TextField fx:id="balance" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label text="Balance" GridPane.rowIndex="4" />
+                              <TextField fx:id="dateOfBirth" promptText="MM/DD/YY" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </children>
@@ -139,7 +138,6 @@
                               <Label text="Last Name" GridPane.rowIndex="1" />
                               <Label text="Date of Birth" GridPane.rowIndex="2" />
                               <Label text="Account Type" GridPane.rowIndex="3" />
-                              <DatePicker fx:id="dateOfBirth1" prefHeight="25.0" prefWidth="174.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <GridPane fx:id="accountTypeChooserGridPane1" prefHeight="114.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="126.0" minWidth="10.0" prefWidth="87.0" />
@@ -192,13 +190,14 @@
                               </GridPane>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
-                                    <Button fx:id="openButton1" mnemonicParsing="false" onAction="#openAccountButton" prefHeight="25.0" prefWidth="90.0" text="Deposit" />
-                                    <Button fx:id="closeButton1" mnemonicParsing="false" onAction="#closeAccount" prefHeight="25.0" prefWidth="90.0" text="Withdraw" />
+                                    <Button fx:id="openButton1" mnemonicParsing="false" onAction="#depositButton" prefHeight="25.0" prefWidth="90.0" text="Deposit" />
+                                    <Button fx:id="closeButton1" mnemonicParsing="false" onAction="#withdrawButton" prefHeight="25.0" prefWidth="90.0" text="Withdraw" />
                                  </children>
                               </HBox>
                               <Button fx:id="clearAll1" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#clearOptions" text="Clear" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                               <TextField fx:id="balance1" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label text="Amount" GridPane.rowIndex="4" />
+                              <TextField fx:id="dateOfBirth1" promptText="MM/DD/YY" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
                      </children></AnchorPane>

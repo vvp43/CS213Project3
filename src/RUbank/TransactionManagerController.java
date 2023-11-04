@@ -5,6 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class TransactionManagerController {
 
     @FXML
@@ -53,10 +56,10 @@ public class TransactionManagerController {
     private RadioButton collegeCheckingButtonClick1;
 
     @FXML
-    private DatePicker dateOfBirth;
+    private TextField dateOfBirth;
 
     @FXML
-    private DatePicker dateOfBirth1;
+    private TextField dateOfBirth1;
 
     @FXML
     private TextField firstName;
@@ -138,6 +141,7 @@ public class TransactionManagerController {
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();
         loyalCustomerButton.setDisable(true);
+
         toggleOpenTab();
 
         openAcc(accountDatabase);
@@ -149,6 +153,7 @@ public class TransactionManagerController {
         toggleDepositTab();
 
         dep(accountDatabase);
+
 
     }
 
@@ -234,7 +239,7 @@ public class TransactionManagerController {
             if(depositButton() != null){
                 Account a = depositButton();
                 updateAccountForOperations(a, accountDatabase);
-                System.out.println("looking for "+a.toString()+"\n");
+                //System.out.println("looking for "+a.toString()+"\n");
                 if(accountDatabase.contains(a)){
                     accountDatabase.deposit(a);
                     textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" Deposit - balance updated.\n");
@@ -247,6 +252,14 @@ public class TransactionManagerController {
         });
     }
 
+    private LocalDate parseDate(String input) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Adjust the format as needed
+            return LocalDate.parse(input, formatter);
+        } catch (Exception e) {
+            return null;
+        }
+    }
     @FXML
     void onCollegeCheckingButtonClick(ActionEvent event) {
 
@@ -254,9 +267,9 @@ public class TransactionManagerController {
 
     @FXML
     Account openAccountButton() {
-        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null
-            && dateOfBirth.getValue() != null){
-                Date a = createDateFromString(dateOfBirth.getValue().toString());
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getText() != null
+            && dateOfBirth.getText() != null){
+                Date a = createDateFromString(dateOfBirth.getText());
                 if(checkingButtonClick.isSelected()){
                     return addCheck(a);
                 }
@@ -278,10 +291,11 @@ public class TransactionManagerController {
     }
     @FXML
     Account closeAccount() {
-        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getValue() != null
-                && dateOfBirth.getValue() != null){
-            Date a = createDateFromString(dateOfBirth.getValue().toString());
-                if(a.isValid().isEmpty()) {
+        if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getText() != null
+                && dateOfBirth.getText() != null) {
+            Date a = createDateFromString(dateOfBirth.getText());
+            if(a != null){
+                if (a.isValid().isEmpty()) {
                     Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
                     if (checkingButtonClick.isSelected()) {
                         return new Checking(prof, 0);
@@ -290,7 +304,7 @@ public class TransactionManagerController {
                     } else if (savingsButtonClick.isSelected()) {
                         return new Savings(prof, 0, true);
                     } else if (moneyMarketButtonClick.isSelected()) {
-                        return new MoneyMarket(prof, 0,true, 0);
+                        return new MoneyMarket(prof, 0, true, 0);
                     } else {
                         textArea.appendText("Missing data for opening an account.\n");
                     }
@@ -298,38 +312,22 @@ public class TransactionManagerController {
                     textArea.appendText(a.isValid() + "\n");
                 }
         } else {
+                textArea.appendText("Invalid Date Format! \n");
+            }
+        } else {
             textArea.appendText("Missing data for opening an account.\n");
         }
         return null;
     }
     @FXML
     Account depositButton() {
-        if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getValue() != null
-                && dateOfBirth1.getValue() != null){
-            Date a = createDateFromString(dateOfBirth1.getValue().toString());
-            if(a.isValid().isEmpty()) {
-                Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
-                if (isValidDouble(balance1.getText())) {
-                    if (Double.parseDouble(balance1.getText()) > 0) {
-                        if (checkingButtonClick1.isSelected()) {
-                            return new Checking(prof, Double.parseDouble(balance1.getText()));
-                        } else if (collegeCheckingButtonClick1.isSelected()) {
-                            return new CollegeChecking(prof, Double.parseDouble(balance1.getText()), null);
-                        } else if (savingsButtonClick1.isSelected()) {
-                            return new Savings(prof, Double.parseDouble(balance1.getText()), true);
-                        } else if (moneyMarketButtonClick1.isSelected()) {
-                            return new MoneyMarket(prof, Double.parseDouble(balance1.getText()),true, 0);
-                        } else {
-                            textArea.appendText("Missing data for opening an account.\n");
-                        }
-                    } else {
-                        textArea.appendText("Deposit - amount cannot be 0 or negative.\n");
-                    }
-                } else {
-                    textArea.appendText("Not a valid amount.\n");
-                }
+        if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getText() != null
+                && dateOfBirth1.getText() != null){
+            Date a = createDateFromString(dateOfBirth1.getText().toString());
+            if(depositHelper(a) != null){
+                return depositHelper(a);
             } else {
-                textArea.appendText(a.isValid() + "\n");
+                return null;
             }
         } else {
             textArea.appendText("Missing data for opening an account.\n");
@@ -351,9 +349,36 @@ public class TransactionManagerController {
     void clearOptions(ActionEvent event) {
         firstName.setText("");
         lastName.setText("");
-        dateOfBirth.setValue(null);
+        dateOfBirth.setText(null);
         tgAccountType.selectToggle(null);
         tgLocation.selectToggle(null);
+    }
+    private Account depositHelper(Date a){
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
+            if (isValidDouble(balance1.getText())) {
+                if (Double.parseDouble(balance1.getText()) > 0) {
+                    if (checkingButtonClick1.isSelected()) {
+                        return new Checking(prof, Double.parseDouble(balance1.getText()));
+                    } else if (collegeCheckingButtonClick1.isSelected()) {
+                        return new CollegeChecking(prof, Double.parseDouble(balance1.getText()), null);
+                    } else if (savingsButtonClick1.isSelected()) {
+                        return new Savings(prof, Double.parseDouble(balance1.getText()), true);
+                    } else if (moneyMarketButtonClick1.isSelected()) {
+                        return new MoneyMarket(prof, Double.parseDouble(balance1.getText()),true, 0);
+                    } else {
+                        textArea.appendText("Missing data for opening an account.\n");
+                    }
+                } else {
+                    textArea.appendText("Deposit - amount cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid() + "\n");
+        }
+        return null;
     }
     public static boolean isValidDouble(String input) {
         if (input == null) {
@@ -368,30 +393,46 @@ public class TransactionManagerController {
     }
     private Date createDateFromString(String date) { // need to catch exception wher e  integers cant beparsed
         //Split date string into array contains month, day, year
-        String[] dateArr = date.split("-");
-        int year = Integer.parseInt(dateArr[0]);
-        int month = Integer.parseInt(dateArr[1]);
-        int day = Integer.parseInt(dateArr[2]);
 
-
+        String[] dateArr = date.split("/");
+        if(dateArr.length == 3) {
+            if (isInteger(dateArr[0]) && isInteger(dateArr[1]) && isInteger(dateArr[2])) {
+                int month = Integer.parseInt(dateArr[0]);
+                int day = Integer.parseInt(dateArr[1]);
+                int year = Integer.parseInt(dateArr[2]);
+                return new Date(year, month, day);
+            }
+        }
         //Create Date object and return
-        return new Date(year, month, day);
+        return null;
     }
 
+    private boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
     private Account addCheck(Date a){
-        if(a.isValid().isEmpty()) {
-            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
-            if (isValidDouble(balance.getText())) {
-                if (Double.parseDouble(balance.getText()) > 0) {
-                    return new Checking(prof, Double.parseDouble(balance.getText()));
+        if(a != null) {
+            if (a.isValid().isEmpty()) {
+                Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
+                if (isValidDouble(balance.getText())) {
+                    if (Double.parseDouble(balance.getText()) > 0) {
+                        return new Checking(prof, Double.parseDouble(balance.getText()));
+                    } else {
+                        textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    }
                 } else {
-                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    textArea.appendText("Not a valid amount.\n");
                 }
             } else {
-                textArea.appendText("Not a valid amount.\n");
+                textArea.appendText(a.isValid() + "\n");
             }
         } else {
-            textArea.appendText(a.isValid()+"\n");
+            textArea.appendText("Invalid Date Format!\n");
         }
         return null;
     }
@@ -408,61 +449,73 @@ public class TransactionManagerController {
             textArea.appendText("Invalid campus!\n");
             return null;
         }
-        if(a.isValid().isEmpty()) {
-            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
-            if (isValidDouble(balance.getText())) {
-                if (Double.parseDouble(balance.getText()) > 0) {
-                    return new CollegeChecking(prof, Double.parseDouble(balance.getText()), campus);
+        if(a != null) {
+            if (a.isValid().isEmpty()) {
+                Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
+                if (isValidDouble(balance.getText())) {
+                    if (Double.parseDouble(balance.getText()) > 0) {
+                        return new CollegeChecking(prof, Double.parseDouble(balance.getText()), campus);
+                    } else {
+                        textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    }
                 } else {
-                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    textArea.appendText("Not a valid amount.\n");
                 }
             } else {
-                textArea.appendText("Not a valid amount.\n");
+                textArea.appendText(a.isValid() + "\n");
             }
         } else {
-            textArea.appendText(a.isValid()+"\n");
+            textArea.appendText("Invalid Date Format!\n");
         }
         return null;
     }
     private Account addSavings(Date a){
-        if(a.isValid().isEmpty()) {
-            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
-            if (isValidDouble(balance.getText())) {
-                if (Double.parseDouble(balance.getText()) > 0) {
-                    if(loyalCustomerButton.isSelected()){
-                        return new Savings(prof, Double.parseDouble(balance.getText()), true);
+        if(a != null) {
+            if (a.isValid().isEmpty()) {
+                Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
+                if (isValidDouble(balance.getText())) {
+                    if (Double.parseDouble(balance.getText()) > 0) {
+                        if (loyalCustomerButton.isSelected()) {
+                            return new Savings(prof, Double.parseDouble(balance.getText()), true);
+                        } else {
+                            return new Savings(prof, Double.parseDouble(balance.getText()), false);
+                        }
                     } else {
-                        return new Savings(prof, Double.parseDouble(balance.getText()), false);
+                        textArea.appendText("Initial deposit cannot be 0 or negative.\n");
                     }
                 } else {
-                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    textArea.appendText("Not a valid amount.\n");
                 }
             } else {
-                textArea.appendText("Not a valid amount.\n");
+                textArea.appendText(a.isValid() + "\n");
             }
         } else {
-            textArea.appendText(a.isValid()+"\n");
+            textArea.appendText("Invalid Date Format!\n");
         }
         return null;
     }
     private Account addMM(Date a){
-        if(a.isValid().isEmpty()) {
-            Profile prof = new Profile(firstName.getText(), lastName.getText(),a);
-            if (isValidDouble(balance.getText())) {
-                if (Double.parseDouble(balance.getText()) > 0) {
-                    if(Double.parseDouble(balance.getText()) >= 2000) {
-                        return new MoneyMarket(prof, Double.parseDouble(balance.getText()), true, 0);
-                    } else{
-                        textArea.appendText("Minimum of $2000 to open a Money Market account.\n");
+        if(a != null) {
+            if (a.isValid().isEmpty()) {
+                Profile prof = new Profile(firstName.getText(), lastName.getText(), a);
+                if (isValidDouble(balance.getText())) {
+                    if (Double.parseDouble(balance.getText()) > 0) {
+                        if (Double.parseDouble(balance.getText()) >= 2000) {
+                            return new MoneyMarket(prof, Double.parseDouble(balance.getText()), true, 0);
+                        } else {
+                            textArea.appendText("Minimum of $2000 to open a Money Market account.\n");
+                        }
+                    } else {
+                        textArea.appendText("Initial deposit cannot be 0 or negative.\n");
                     }
                 } else {
-                    textArea.appendText("Initial deposit cannot be 0 or negative.\n");
+                    textArea.appendText("Not a valid amount.\n");
                 }
             } else {
-                textArea.appendText("Not a valid amount.\n");
+                textArea.appendText(a.isValid() + "\n");
             }
         } else {
-            textArea.appendText(a.isValid()+"\n");
+            textArea.appendText("Invalid Date Format!\n");
         }
         return null;
     }
