@@ -8,46 +8,118 @@ import javafx.scene.layout.GridPane;
 public class TransactionManagerController {
 
     @FXML
+    private Button LoadAccountButton;
+
+    @FXML
     private GridPane accountTypeChooserGridPane;
+
+    @FXML
+    private GridPane accountTypeChooserGridPane1;
+
+    @FXML
+    private TextField balance;
+
+    @FXML
+    private TextField balance1;
 
     @FXML
     private RadioButton camdenButton;
 
     @FXML
+    private RadioButton camdenButton1;
+
+    @FXML
     private RadioButton checkingButtonClick;
+
+    @FXML
+    private RadioButton checkingButtonClick1;
+
+    @FXML
+    private Button clearAll;
+
+    @FXML
+    private Button clearAll1;
+
+    @FXML
+    private Button closeButton;
+
+    @FXML
+    private Button closeButton1;
 
     @FXML
     private RadioButton collegeCheckingButtonClick;
 
     @FXML
+    private RadioButton collegeCheckingButtonClick1;
+
+    @FXML
     private DatePicker dateOfBirth;
+
+    @FXML
+    private DatePicker dateOfBirth1;
 
     @FXML
     private TextField firstName;
 
     @FXML
+    private TextField firstName1;
+
+    @FXML
     private TextField lastName;
+
+    @FXML
+    private TextField lastName1;
 
     @FXML
     private GridPane locationTypeChooserGridPane;
 
     @FXML
+    private GridPane locationTypeChooserGridPane1;
+
+    @FXML
     private CheckBox loyalCustomerButton;
+
+    @FXML
+    private CheckBox loyalCustomerButton1;
 
     @FXML
     private RadioButton moneyMarketButtonClick;
 
     @FXML
+    private RadioButton moneyMarketButtonClick1;
+
+    @FXML
     private RadioButton newBrunswickButton;
+
+    @FXML
+    private RadioButton newBrunswickButton1;
 
     @FXML
     private RadioButton newarkButton;
 
     @FXML
+    private RadioButton newarkButton1;
+
+    @FXML
     private Button openButton;
 
     @FXML
+    private Button openButton1;
+
+    @FXML
+    private Button printFeesAndInterestsButton;
+
+    @FXML
+    private Button printSortedButton;
+
+    @FXML
+    private Button printUpdatedButton;
+
+    @FXML
     private RadioButton savingsButtonClick;
+
+    @FXML
+    private RadioButton savingsButtonClick1;
 
     @FXML
     private TextArea textArea;
@@ -56,36 +128,32 @@ public class TransactionManagerController {
     private ToggleGroup tgAccountType;
 
     @FXML
+    private ToggleGroup tgAccountType1;
+
+    @FXML
     private ToggleGroup tgLocation;
 
     @FXML
-    private Button clearAll;
-
-    @FXML
-    private TextField balance;
-
-    @FXML
-    private Button closeButton;
-    @FXML
-    private Button LoadAccountButton;
-    @FXML
-    private Button printFeesAndInterestsButton;
-    @FXML
-    private Button printSortedButton;
-    @FXML
-    private Button printUpdatedButton;
+    private ToggleGroup tgLocation1;
 
 
     @FXML
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();
         loyalCustomerButton.setDisable(true);
-        toggleCampus();
-        toggleMM();
-        toggleSavings();
+        togglefirst();
+
         openAcc(accountDatabase);
+
         closeAcc(accountDatabase);
 
+        initPrints(accountDatabase);
+
+
+
+    }
+
+    private void initPrints(AccountDatabase accountDatabase){
         printSortedButton.setOnAction(event -> {
             textArea.appendText(accountDatabase.printSorted());
         });
@@ -97,10 +165,8 @@ public class TransactionManagerController {
         printUpdatedButton.setOnAction(event -> {
             textArea.appendText(accountDatabase.printSorted());
         });
-
     }
-
-    private void toggleCampus(){
+    private void togglefirst(){
         locationTypeChooserGridPane.setDisable(true);
         locationTypeChooserGridPane.setDisable(true);
         tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -109,16 +175,12 @@ public class TransactionManagerController {
                 locationTypeChooserGridPane.setDisable(!"collegeCheckingButtonClick".equals(selectedButtonId));
             }
         });
-    }
-    private void toggleMM(){
         tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 String selectedButtonId = ((ToggleButton) newValue).getId();
                 loyalCustomerButton.setDisable(!"moneyMarketButtonClick".equals(selectedButtonId));
             }
         });
-    }
-    private void toggleSavings(){
         tgAccountType.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 String selectedButtonId = ((ToggleButton) newValue).getId();
@@ -126,6 +188,7 @@ public class TransactionManagerController {
             }
         });
     }
+
     private void openAcc(AccountDatabase accountDatabase){
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
