@@ -4,7 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -154,20 +160,67 @@ public class TransactionManagerController {
 
         dep(accountDatabase);
 
-
+        LoadAccountButton.setOnAction(event -> {
+            handleLoadAccounts();
+        });
     }
+    private void handleLoadAccounts() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setInitialFileName("bankAccounts.txt"); // Set the default file name
 
+        Stage stage = (Stage) LoadAccountButton.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            try {
+                if (selectedFile.getName().equals("bankAccounts.txt")) {
+                    readAndProcessFile(selectedFile);
+                } else {
+                    textArea.appendText("Selected file is not named 'bankAccounts.txt'.\n");
+                }
+            } catch (IOException ex) {
+                textArea.appendText("Error reading the file: " + ex.getMessage()+"\n");
+            }
+        } else {
+            textArea.appendText("No file selected.\n");
+        }
+    }
+    private void readAndProcessFile(File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                
+//                String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split("\\s+");//split the whole line into elements of String array
+//                String firstCMD = inputList[0];
+            }
+        }
+    }
     private void initPrints(AccountDatabase accountDatabase){
         printSortedButton.setOnAction(event -> {
-            textArea.appendText(accountDatabase.printSorted());
+            if(!accountDatabase.isEmpty()){
+                textArea.appendText(accountDatabase.printSorted());
+            } else {
+                textArea.appendText("Account Database is empty!\n");
+            }
+
         });
 
         printFeesAndInterestsButton.setOnAction(event -> {
-            textArea.appendText(accountDatabase.printFeesAndInterests());
+            if(!accountDatabase.isEmpty()){
+                textArea.appendText(accountDatabase.printFeesAndInterests());
+            } else {
+                textArea.appendText("Account Database is empty!\n");
+            }
         });
 
         printUpdatedButton.setOnAction(event -> {
-            textArea.appendText(accountDatabase.printSorted());
+            if(!accountDatabase.isEmpty()){
+                textArea.appendText(accountDatabase.printSorted());
+            } else {
+                textArea.appendText("Account Database is empty!\n");
+            }
         });
     }
     private void toggleOpenTab(){
