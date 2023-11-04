@@ -187,16 +187,74 @@ public class TransactionManagerController {
             textArea.appendText("No file selected.\n");
         }
     }
+    /**
+     * isValidCommand() method checks if user's input is valid
+     * @param command user's input
+     * @return true if command is valid and false if command is invalid
+     */
+    public boolean isValidCommand(String command) {
+        return command.equals("O") || command.equals("C") || command.equals("D")
+                || command.equals("W") || command.equals("P") || command.equals("PI")
+                || command.equals("UB") || command.equals("Q");
+    }
     private void readAndProcessFile(File file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
+            int a = 0;
             while ((line = reader.readLine()) != null) {
-                
-//                String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split("\\s+");//split the whole line into elements of String array
-//                String firstCMD = inputList[0];
+                if (!line.trim().isEmpty()) {
+                    clearAll.fire();
+                    String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
+                    String firstCMD = inputList[0];
+                    switch (firstCMD) {
+                        case "Q" -> {
+                            System.out.println("Transaction Manager is terminated.");
+                        }
+                        case "O" -> {
+                            switch (inputList[1]) {
+                                case "C" -> {
+                                    if(inputList.length == 6) {
+                                        for(String ax : inputList){
+                                            System.out.println(ax);
+                                        }
+                                        firstName.setText(inputList[2]);
+                                        lastName.setText(inputList[3]);
+                                        dateOfBirth.setText(inputList[4]);
+                                        checkingButtonClick.fire();
+                                        balance.setText(inputList[5]);
+
+                                        openButton.fire();
+
+                                    }
+                                }case "CC" -> {
+                                    if(inputList.length == 7) {
+
+                                    }
+                                } case "S" -> {
+                                    if(inputList.length == 7) {
+                                        System.out.println();
+                                    }
+                                } case "MM" -> {
+                                    if(inputList.length == 6) {
+
+                                    }
+                                }
+                            }
+//                        case "C" ->
+//                        case "D" ->
+//                        case "W" ->
+//                        case "P" ->
+//                        case "PI" ->
+//                        case "PD" ->
+//                        case "UB" ->
+                            }
+                        }
+                }
             }
         }
     }
+
+
     private void initPrints(AccountDatabase accountDatabase){
         printSortedButton.setOnAction(event -> {
             if(!accountDatabase.isEmpty()){
