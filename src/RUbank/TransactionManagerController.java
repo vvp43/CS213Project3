@@ -160,6 +160,7 @@ public class TransactionManagerController {
 
         dep(accountDatabase);
 
+        with(accountDatabase);
         LoadAccountButton.setOnAction(event -> {
             handleLoadAccounts();
         });
@@ -206,54 +207,145 @@ public class TransactionManagerController {
                     clearAll.fire();
                     String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
                     String firstCMD = inputList[0];
-                    switch (firstCMD) {
-                        case "Q" -> {
-                            System.out.println("Transaction Manager is terminated.");
-                        }
-                        case "O" -> {
-                            switch (inputList[1]) {
-                                case "C" -> {
-                                    if(inputList.length == 6) {
-                                        for(String ax : inputList){
-                                            System.out.println(ax);
-                                        }
-                                        firstName.setText(inputList[2]);
-                                        lastName.setText(inputList[3]);
-                                        dateOfBirth.setText(inputList[4]);
-                                        checkingButtonClick.fire();
-                                        balance.setText(inputList[5]);
-
-                                        openButton.fire();
-
-                                    }
-                                }case "CC" -> {
-                                    if(inputList.length == 7) {
-
-                                    }
-                                } case "S" -> {
-                                    if(inputList.length == 7) {
-                                        System.out.println();
-                                    }
-                                } case "MM" -> {
-                                    if(inputList.length == 6) {
-
-                                    }
-                                }
+                    if (!isValidCommand(firstCMD)) {
+                        textArea.appendText("Invalid command!\n");
+                    } else {
+                        switch (firstCMD) {
+                            case "Q" -> {
+                                textArea.appendText("\nTransaction Manager is terminated.");
+                                return;
                             }
-//                        case "C" ->
-//                        case "D" ->
-//                        case "W" ->
-//                        case "P" ->
-//                        case "PI" ->
-//                        case "PD" ->
-//                        case "UB" ->
+                            case "O" -> {
+                                chooseType(inputList);
+                                openButton.fire();
                             }
+                            case "C" -> {
+                                chooseTypeClose(inputList);
+                                closeButton.fire();
+                            }
+                            case "D" -> {
+                                chooseType1(inputList);
+                                openButton1.fire();
+                            }
+                            case "W" -> {
+                                chooseType1(inputList);
+                                closeButton1.fire();
+                            }
+                            case "P" -> printSortedButton.fire();
+                            case "PI" -> printFeesAndInterestsButton.fire();
+                            case "UB" -> printUpdatedButton.fire();
                         }
+                        clearAll.fire();
+                    }
                 }
             }
         }
     }
 
+
+    private void fillBlanks(String[] inputList){
+        firstName.setText(inputList[2]);
+        lastName.setText(inputList[3]);
+        dateOfBirth.setText(inputList[4]);
+        balance.setText(inputList[5]);
+    }
+    private void fillBlanksClose(String[] inputList){
+        firstName.setText(inputList[2]);
+        lastName.setText(inputList[3]);
+        dateOfBirth.setText(inputList[4]);
+    }
+    private void fillBlanks1(String[] inputList){
+        firstName1.setText(inputList[2]);
+        lastName1.setText(inputList[3]);
+        dateOfBirth1.setText(inputList[4]);
+        balance1.setText(inputList[5]);
+    }
+
+    private void chooseType(String[] inputList){
+        switch (inputList[1]) {
+            case "C" -> {
+                if(inputList.length == 6) {
+                    fillBlanks(inputList);
+                    checkingButtonClick.fire();
+                }
+            }case "CC" -> {
+                if(inputList.length == 7) {
+                    fillBlanks(inputList);
+                    collegeCheckingButtonClick.fire();
+                    switch(inputList[6]){
+                        case "0"  -> newBrunswickButton.fire();
+                        case "1" -> newarkButton.fire();
+                        case "2" -> camdenButton.fire();
+                    }
+                }
+            } case "S" -> {
+                if(inputList.length == 7) {
+                    fillBlanks(inputList);
+                    savingsButtonClick.fire();
+                    if (inputList[6].equals("1")) {
+                        savingsButtonClick.fire();
+                    }
+                }
+            } case "MM" -> {
+                if(inputList.length == 6) {
+                    fillBlanks(inputList);
+                    moneyMarketButtonClick.fire();
+                }
+            }
+        }
+    }
+
+    private void chooseTypeClose(String[] inputList){
+        switch (inputList[1]) {
+            case "C" -> {
+                if(inputList.length == 5) {
+                    fillBlanksClose(inputList);
+                    checkingButtonClick.fire();
+                }
+            }case "CC" -> {
+                if(inputList.length == 5) {
+                    fillBlanksClose(inputList);
+                    collegeCheckingButtonClick.fire();
+                }
+            } case "S" -> {
+                if(inputList.length == 5) {
+                    fillBlanksClose(inputList);
+                    savingsButtonClick.fire();
+                }
+            } case "MM" -> {
+                if(inputList.length == 5) {
+                    fillBlanksClose(inputList);
+                    moneyMarketButtonClick.fire();
+                }
+            }
+        }
+    }
+
+    private void chooseType1(String[] inputList){
+        switch (inputList[1]) {
+            case "C" -> {
+                if(inputList.length == 6) {
+                    fillBlanks1(inputList);
+                    checkingButtonClick1.fire();
+                }
+            }case "CC" -> {
+                if(inputList.length == 6) {
+                    fillBlanks1(inputList);
+                    collegeCheckingButtonClick1.fire();
+                }
+            } case "S" -> {
+                if(inputList.length == 6) {
+                    fillBlanks1(inputList);
+                    savingsButtonClick1.fire();
+                }
+            } case "MM" -> {
+                if(inputList.length == 6) {
+                    fillBlanks1(inputList);
+                    moneyMarketButtonClick1.fire();
+                }
+            }
+        }
+    }
 
     private void initPrints(AccountDatabase accountDatabase){
         printSortedButton.setOnAction(event -> {
@@ -362,6 +454,24 @@ public class TransactionManagerController {
             }
         });
     }
+    private void with(AccountDatabase accountDatabase) {
+        closeButton1.setOnAction(event -> {
+            if(depositButton() != null){
+                Account a = withdrawButton();
+                updateAccountForOperations(a, accountDatabase);
+                //System.out.println("looking for "+a.toString()+"\n");
+                if(accountDatabase.contains(a)){
+                    accountDatabase.withdraw(a);
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" Withdraw - balance updated.\n");
+
+                }
+                else{
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is not in the database.\n");
+                }
+            }
+        });
+    }
+
 
     private LocalDate parseDate(String input) {
         try {
@@ -417,7 +527,7 @@ public class TransactionManagerController {
                     } else if (moneyMarketButtonClick.isSelected()) {
                         return new MoneyMarket(prof, 0, true, 0);
                     } else {
-                        textArea.appendText("Missing data for opening an account.\n");
+                        textArea.appendText("Missing data for closing an account.\n");
                     }
                 } else {
                     textArea.appendText(a.isValid() + "\n");
@@ -426,7 +536,7 @@ public class TransactionManagerController {
                 textArea.appendText("Invalid Date Format! \n");
             }
         } else {
-            textArea.appendText("Missing data for opening an account.\n");
+            textArea.appendText("Missing data for closing an account.\n");
         }
         return null;
     }
@@ -434,19 +544,37 @@ public class TransactionManagerController {
     Account depositButton() {
         if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getText() != null
                 && dateOfBirth1.getText() != null){
-            Date a = createDateFromString(dateOfBirth1.getText().toString());
-            if(depositHelper(a) != null){
-                return depositHelper(a);
+            Date a = createDateFromString(dateOfBirth1.getText());
+            if(a != null) {
+                if (depositHelper(a) != null) {
+                    return depositHelper(a);
+                } else {
+                    return null;
+                }
             } else {
-                return null;
+                textArea.appendText("Invalid Date Format! \n");
             }
         } else {
-            textArea.appendText("Missing data for opening an account.\n");
+            textArea.appendText("Missing data for depositing into an account.\n");
         }
         return null;
     }
     @FXML
     Account withdrawButton() {
+        if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getText() != null){
+            Date a = createDateFromString(dateOfBirth1.getText());
+            if(a != null) {
+                if (withdrawHelper(a) != null) {
+                    return withdrawHelper(a);
+                } else {
+                    return null;
+                }
+            } else {
+                textArea.appendText("Invalid Date Format! \n");
+            }
+        } else {
+            textArea.appendText("Missing data for depositing into an account.\n");
+        }
         return null;
     }
 
@@ -460,9 +588,14 @@ public class TransactionManagerController {
     void clearOptions(ActionEvent event) {
         firstName.setText("");
         lastName.setText("");
-        dateOfBirth.setText(null);
+        dateOfBirth.setText("");
         tgAccountType.selectToggle(null);
         tgLocation.selectToggle(null);
+        firstName1.setText("");
+        lastName1.setText("");
+        dateOfBirth1.setText("");
+        tgAccountType1.selectToggle(null);
+        tgLocation1.selectToggle(null);
     }
     private Account depositHelper(Date a){
         if(a.isValid().isEmpty()) {
@@ -478,10 +611,37 @@ public class TransactionManagerController {
                     } else if (moneyMarketButtonClick1.isSelected()) {
                         return new MoneyMarket(prof, Double.parseDouble(balance1.getText()),true, 0);
                     } else {
-                        textArea.appendText("Missing data for opening an account.\n");
+                        textArea.appendText("Missing data for depositing into an account.\n");
                     }
                 } else {
                     textArea.appendText("Deposit - amount cannot be 0 or negative.\n");
+                }
+            } else {
+                textArea.appendText("Not a valid amount.\n");
+            }
+        } else {
+            textArea.appendText(a.isValid() + "\n");
+        }
+        return null;
+    }
+    private Account withdrawHelper(Date a){
+        if(a.isValid().isEmpty()) {
+            Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
+            if (isValidDouble(balance1.getText())) {
+                if (Double.parseDouble(balance1.getText()) > 0) {
+                    if (checkingButtonClick1.isSelected()) {
+                        return new Checking(prof, Double.parseDouble(balance1.getText()));
+                    } else if (collegeCheckingButtonClick1.isSelected()) {
+                        return new CollegeChecking(prof, Double.parseDouble(balance1.getText()), null);
+                    } else if (savingsButtonClick1.isSelected()) {
+                        return new Savings(prof, Double.parseDouble(balance1.getText()), true);
+                    } else if (moneyMarketButtonClick1.isSelected()) {
+                        return new MoneyMarket(prof, Double.parseDouble(balance1.getText()),true, 0);
+                    } else {
+                        textArea.appendText("Missing data for withdrawal.\n");
+                    }
+                } else {
+                    textArea.appendText("Withdraw - amount cannot be 0 or negative.\n");
                 }
             } else {
                 textArea.appendText("Not a valid amount.\n");
