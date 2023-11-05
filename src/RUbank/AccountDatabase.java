@@ -288,7 +288,7 @@ public class AccountDatabase {
      * their respective monthly interest and fees at the end of the string, then prints.
      */
     public String printFeesAndInterests() {
-        DecimalFormat df = new DecimalFormat("#,###.00");
+        DecimalFormat df = new DecimalFormat("#,##0.00");
         String output = "*list of accounts with fee and monthly interest\n";
         if(accounts[0] != null) {
             Account[] copy = new Account[numAcct];
@@ -315,7 +315,6 @@ public class AccountDatabase {
      * profile, then prints.
      */
     public String printUpdatedBalances() {
-
         String output = "*list of accounts with fees and interests applied.\n";
         if(this.accounts == null) {
             output = "Account Database is empty!";
@@ -338,7 +337,7 @@ public class AccountDatabase {
         sort(copy);
         for (Account a : copy) {
             if (a != null) {
-                output = output.concat(a.toString());
+                output = output.concat(a.toString()+"\n");
             }
         }
         output = output.concat("*end of list.\n");

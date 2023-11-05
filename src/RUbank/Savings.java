@@ -81,7 +81,6 @@ public class Savings extends Account{
     public void applyMonthlyInterestsAndFees(){
         balance-=monthlyFee();
         balance+=monthlyInterest();
-        formatBal();
     }
 
     /**

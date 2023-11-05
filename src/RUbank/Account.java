@@ -25,20 +25,12 @@ public abstract class Account implements Comparable<Account>{
     }
 
     /**
-     * applyMonthlyInterestsAndFees() method: Method used to apply montly interests and fees to the balance of
+     * applyMonthlyInterestsAndFees() method: Method used to apply monthly interests and fees to the balance of
      * an Account object.
      */
     public void applyMonthlyInterestsAndFees(){
         balance+=monthlyInterest();
         balance-=monthlyFee();
-        formatBal();
-    }
-    /**
-     * formatBal() method: reformates balance to proper decimal
-     */
-    public void formatBal(){
-        DecimalFormat df = new DecimalFormat("#,###.00");
-        df.format(balance);
     }
 
     /**
@@ -48,7 +40,7 @@ public abstract class Account implements Comparable<Account>{
      */
     @Override
     public String toString(){
-        DecimalFormat df = new DecimalFormat("#,###.00");
+        DecimalFormat df = new DecimalFormat("#,##0.00");
         return "Checking::"+holder.getFname()+" "+holder.getLname()+" "
                 +holder.getDob().toString()+"::Balance $"+df.format(balance);
     }

@@ -3,7 +3,7 @@ package RUbank;
 import java.text.DecimalFormat;
 
 /**
- * This class class extends the Savings class; includes one instance variable only, and defines the constants
+ * This class extends the Savings class; includes one instance variable only, and defines the constants
  * for interest rate and fee.
  * @author Seth Yeh, Vinh Pham
  */
@@ -95,10 +95,10 @@ public class MoneyMarket extends Savings{
      * applyMonthlyInterestsAndFees() method: applies monthly interests and fees and resets withdrawal to 0.
      */
     public void applyMonthlyInterestsAndFees(){
+
         balance-=monthlyFee();
         balance+=monthlyInterest();
         withdrawal = 0;
-        formatBal();
     }
 
     /**

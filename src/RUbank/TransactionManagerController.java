@@ -161,6 +161,7 @@ public class TransactionManagerController {
         dep(accountDatabase);
 
         with(accountDatabase);
+
         LoadAccountButton.setOnAction(event -> {
             handleLoadAccounts();
         });
@@ -262,6 +263,7 @@ public class TransactionManagerController {
     }
 
     private void chooseType(String[] inputList){
+        clearAll.fire();
         switch (inputList[1]) {
             case "C" -> {
                 if(inputList.length == 6) {
@@ -282,8 +284,8 @@ public class TransactionManagerController {
                 if(inputList.length == 7) {
                     fillBlanks(inputList);
                     savingsButtonClick.fire();
-                    if (inputList[6].equals("1")) {
-                        savingsButtonClick.fire();
+                    if (inputList[6].equals("0")) {
+                        loyalCustomerButton.fire();
                     }
                 }
             } case "MM" -> {
@@ -367,7 +369,7 @@ public class TransactionManagerController {
 
         printUpdatedButton.setOnAction(event -> {
             if(!accountDatabase.isEmpty()){
-                textArea.appendText(accountDatabase.printSorted());
+                textArea.appendText(accountDatabase.printUpdatedBalances());
             } else {
                 textArea.appendText("Account Database is empty!\n");
             }
@@ -456,17 +458,21 @@ public class TransactionManagerController {
     }
     private void with(AccountDatabase accountDatabase) {
         closeButton1.setOnAction(event -> {
-            if(depositButton() != null){
+            if(withdrawButton() != null){
                 Account a = withdrawButton();
                 updateAccountForOperations(a, accountDatabase);
+                checkWith(accountDatabase, a);
                 //System.out.println("looking for "+a.toString()+"\n");
-                if(accountDatabase.contains(a)){
-                    accountDatabase.withdraw(a);
-                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" Withdraw - balance updated.\n");
+                if(checkWith(accountDatabase, a)) {
+                    if (accountDatabase.contains(a)) {
+                        accountDatabase.withdraw(a);
+                        textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " Withdraw - balance updated.\n");
 
-                }
-                else{
-                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" is not in the database.\n");
+                    } else {
+                        textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " is not in the database.\n");
+                    }
+                } else {
+                    textArea.appendText(a.holder.getFname()+" "+a.holder.getLname()+ " "+a.holder.getDob().toString() +typeCheckCharacterReturn(a) +" Withdraw - " + "insufficient fund.\n");
                 }
             }
         });
@@ -573,7 +579,7 @@ public class TransactionManagerController {
                 textArea.appendText("Invalid Date Format! \n");
             }
         } else {
-            textArea.appendText("Missing data for depositing into an account.\n");
+            textArea.appendText("Missing data for withdrawal.\n");
         }
         return null;
     }
@@ -717,7 +723,7 @@ public class TransactionManagerController {
         } else if(camdenButton.isSelected()){
             campus = Campus.CAMDEN;
         } else {
-            textArea.appendText("Invalid campus!\n");
+            textArea.appendText("Invalid campus code.\n");
             return null;
         }
         if(a != null) {
@@ -825,6 +831,33 @@ public class TransactionManagerController {
             }
         }
         return false;
+    }
+    private boolean checkWith(AccountDatabase ad, Account a){
+        Account[] list = ad.getAccounts();
+        if(list != null) {
+            for (Account acc : list) {
+                if (acc != null) {
+                    if(acc.getClass() == a.getClass()){
+                        if(acc.equals(a) && (a.balance > acc.balance)){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        if(list != null) {
+            for (Account acc : list) {
+                if (acc != null) {
+                    if(acc.getClass() == a.getClass()){
+                        //System.out.println(acc.balance-(a.balance+10));
+                        if(acc.equals(a) && ((acc.balance - (a.balance+10) < 0))){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private void updateAccountForOperations(Account a, AccountDatabase ad){

@@ -12,7 +12,6 @@ public class Date implements Comparable<Date> {
     private int year;
     private int month;
     private int day;
-    final Calendar curr = Calendar.getInstance(); // the current year date
     Calendar event = Calendar.getInstance(); // the event date
 
     /**

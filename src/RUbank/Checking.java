@@ -20,6 +20,7 @@ public class Checking extends Account {
     @Override
     public double monthlyInterest() {
         return balance * (checkingInterestRate / 12);
+        //return Double.parseDouble(df.format(balance * (checkingInterestRate / 12)));
     }
 
     /**
@@ -31,6 +32,7 @@ public class Checking extends Account {
         if (balance >= 1000) {
             return 0;
         } else {
+            //return Double.parseDouble(df.format(checkingMonthlyFee));
             return checkingMonthlyFee;
         }
     }
@@ -42,7 +44,6 @@ public class Checking extends Account {
     public void applyMonthlyInterestsAndFees() {
         balance -= monthlyFee();
         balance += monthlyInterest();
-        formatBal();
     }
 
 

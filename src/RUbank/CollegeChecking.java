@@ -12,9 +12,6 @@ public class CollegeChecking extends Checking {
     //Instance variable
     private Campus campus; //campus code
 
-    //Constants
-    final double collegeCheckingFee = 12.0;
-    final double collegeCheckingInterestRate = 0.01;
 
     public CollegeChecking(Profile holder, double balance, Campus campus) {
         super(holder, balance);
@@ -50,7 +47,6 @@ public class CollegeChecking extends Checking {
     public void applyMonthlyInterestsAndFees(){
         balance-=monthlyFee();
         balance+=monthlyInterest();
-        formatBal();
     }
 
     /**
