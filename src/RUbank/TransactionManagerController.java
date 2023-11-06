@@ -166,6 +166,10 @@ public class TransactionManagerController {
             handleLoadAccounts();
         });
     }
+    /**
+     * handleLoadAccounts() method: handler method that creates fileChooser that looks for bankAccounts.txt,
+     * and handles errors that could possibly happen during file selection.
+     */
     private void handleLoadAccounts() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
@@ -199,6 +203,13 @@ public class TransactionManagerController {
                 || command.equals("W") || command.equals("P") || command.equals("PI")
                 || command.equals("UB") || command.equals("Q");
     }
+
+    /**
+     * readAndProcessFile method: Reads from given file, line by line and processes each command and processes it through
+     * the program, printing results to the textArea. Ends parsing if Q is entered.
+     * @param file file to read from (bankAccounts.txt)
+     * @throws IOException exception handler
+     */
     private void readAndProcessFile(File file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -211,31 +222,7 @@ public class TransactionManagerController {
                     if (!isValidCommand(firstCMD)) {
                         textArea.appendText("Invalid command!\n");
                     } else {
-                        switch (firstCMD) {
-                            case "Q" -> {
-                                textArea.appendText("\nTransaction Manager is terminated.");
-                                return;
-                            }
-                            case "O" -> {
-                                chooseType(inputList);
-                                openButton.fire();
-                            }
-                            case "C" -> {
-                                chooseTypeClose(inputList);
-                                closeButton.fire();
-                            }
-                            case "D" -> {
-                                chooseType1(inputList);
-                                openButton1.fire();
-                            }
-                            case "W" -> {
-                                chooseType1(inputList);
-                                closeButton1.fire();
-                            }
-                            case "P" -> printSortedButton.fire();
-                            case "PI" -> printFeesAndInterestsButton.fire();
-                            case "UB" -> printUpdatedButton.fire();
-                        }
+                        switchHelper(firstCMD, inputList);
                         clearAll.fire();
                     }
                 }
@@ -243,18 +230,64 @@ public class TransactionManagerController {
         }
     }
 
+    /**
+     * switchHelper : Helper method that handles the switch statement used to parse and handle commands read from
+     * bankAccounts.txt
+     * @param firstCMD first character of line (Q,O,C,D,W ...)
+     * @param inputList command that was parsed from txt separated into an array.
+     */
+    private void switchHelper(String firstCMD, String[] inputList){
+        switch (firstCMD) {
+            case "Q" -> {
+                textArea.appendText("\nTransaction Manager is terminated.");
+                return;
+            }
+            case "O" -> {
+                chooseType(inputList);
+                openButton.fire();
+            }
+            case "C" -> {
+                chooseTypeClose(inputList);
+                closeButton.fire();
+            }
+            case "D" -> {
+                chooseType1(inputList);
+                openButton1.fire();
+            }
+            case "W" -> {
+                chooseType1(inputList);
+                closeButton1.fire();
+            }
+            case "P" -> printSortedButton.fire();
+            case "PI" -> printFeesAndInterestsButton.fire();
+            case "UB" -> printUpdatedButton.fire();
+        }
+    }
 
+    /**
+     * fillBlanks() method: Helper method to fill in data fields in order to prepare for opening an account
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void fillBlanks(String[] inputList){
         firstName.setText(inputList[2]);
         lastName.setText(inputList[3]);
         dateOfBirth.setText(inputList[4]);
         balance.setText(inputList[5]);
     }
+    /**
+     * fillBlanksClose() method: Helper method to fill in data fields in order to prepare for closing an account
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void fillBlanksClose(String[] inputList){
         firstName.setText(inputList[2]);
         lastName.setText(inputList[3]);
         dateOfBirth.setText(inputList[4]);
     }
+    /**
+     * fillBlanks1() method: Helper method to fill in data fields in order to withdraw or deposit
+     * for opening an account
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void fillBlanks1(String[] inputList){
         firstName1.setText(inputList[2]);
         lastName1.setText(inputList[3]);
@@ -262,6 +295,10 @@ public class TransactionManagerController {
         balance1.setText(inputList[5]);
     }
 
+    /**
+     * chooseType method: Method that parses commands and uses the program GUI to perform the open operation.
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void chooseType(String[] inputList){
         clearAll.fire();
         switch (inputList[1]) {
@@ -296,7 +333,10 @@ public class TransactionManagerController {
             }
         }
     }
-
+    /**
+     * chooseTypeClose method: Method that parses commands and uses the program GUI to perform the close operation.
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void chooseTypeClose(String[] inputList){
         switch (inputList[1]) {
             case "C" -> {
@@ -322,7 +362,11 @@ public class TransactionManagerController {
             }
         }
     }
-
+    /**
+     * chooseType1 method: Method that parses commands and uses the program GUI to perform the deposit/withdraw
+     * operation.
+     * @param inputList command that was parsed from txt separated into an array.
+     */
     private void chooseType1(String[] inputList){
         switch (inputList[1]) {
             case "C" -> {
@@ -349,6 +393,10 @@ public class TransactionManagerController {
         }
     }
 
+    /**
+     * initPrints: Initializes functionality for the various print functions
+     * @param accountDatabase main account database.
+     */
     private void initPrints(AccountDatabase accountDatabase){
         printSortedButton.setOnAction(event -> {
             if(!accountDatabase.isEmpty()){
@@ -358,7 +406,6 @@ public class TransactionManagerController {
             }
 
         });
-
         printFeesAndInterestsButton.setOnAction(event -> {
             if(!accountDatabase.isEmpty()){
                 textArea.appendText(accountDatabase.printFeesAndInterests());
@@ -366,7 +413,6 @@ public class TransactionManagerController {
                 textArea.appendText("Account Database is empty!\n");
             }
         });
-
         printUpdatedButton.setOnAction(event -> {
             if(!accountDatabase.isEmpty()){
                 textArea.appendText(accountDatabase.printUpdatedBalances());
@@ -375,6 +421,11 @@ public class TransactionManagerController {
             }
         });
     }
+
+    /**
+     * toggleOpenTab(): Initializes toggleGroups for the AccountType choosers, and also for the loyalty and
+     * campus toggle groups.
+     */
     private void toggleOpenTab(){
         locationTypeChooserGridPane.setDisable(true);
         locationTypeChooserGridPane.setDisable(true);
@@ -397,6 +448,11 @@ public class TransactionManagerController {
             }
         });
     }
+
+    /**
+     * toggleDepositTab(): Initializes toggleGroups for the AccountType choosers, and also for the loyalty and
+     *      * campus toggle groups, but for the Deposit tab.
+     */
     private void toggleDepositTab(){
         locationTypeChooserGridPane1.setDisable(true);
         tgAccountType1.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -407,6 +463,10 @@ public class TransactionManagerController {
         });
     }
 
+    /**
+     * openAcc(): Initializes the Open Button functionality
+     * @param accountDatabase main account database.
+     */
     private void openAcc(AccountDatabase accountDatabase){
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
@@ -423,6 +483,11 @@ public class TransactionManagerController {
             }
         });
     }
+
+    /**
+     * closeAcc(): Initializes the Close Button functionality
+     * @param accountDatabase
+     */
     private void closeAcc(AccountDatabase accountDatabase) {
         closeButton.setOnAction(event -> {
             if(closeAccount() != null){
@@ -439,6 +504,11 @@ public class TransactionManagerController {
             }
         });
     }
+
+    /**
+     * dep(): Initializes the Deposit Button functionality
+     * @param accountDatabase main account database.
+     */
     private void dep(AccountDatabase accountDatabase) {
         openButton1.setOnAction(event -> {
             if(depositButton() != null){
@@ -456,6 +526,11 @@ public class TransactionManagerController {
             }
         });
     }
+
+    /**
+     * with(): Initializes the Withdraw Button functionality
+     * @param accountDatabase main account database.
+     */
     private void with(AccountDatabase accountDatabase) {
         closeButton1.setOnAction(event -> {
             if(withdrawButton() != null){
@@ -478,20 +553,20 @@ public class TransactionManagerController {
         });
     }
 
-
-    private LocalDate parseDate(String input) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Adjust the format as needed
-            return LocalDate.parse(input, formatter);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    /**
+     * hyh
+     * @param event
+     */
     @FXML
     void onCollegeCheckingButtonClick(ActionEvent event) {
 
     }
 
+    /**
+     * openAccountButton(): Method that generates an account to Open depending on program inputs.
+     * Also handles errors.
+     * @return Account Object corresponding to GUI inputs
+     */
     @FXML
     Account openAccountButton() {
         if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getText() != null
@@ -516,6 +591,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * closeAccount(): Method that generates an account to Close depending on program inputs.
+     * Also handles errors.
+     * @return Account Object corresponding to GUI inputs
+     */
     @FXML
     Account closeAccount() {
         if(!firstName.getText().isEmpty() && !lastName.getText().isEmpty() && dateOfBirth.getText() != null
@@ -546,6 +626,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * depositButton(): Method that generates an account to Deposit from depending on program inputs.
+     * Also handles errors.
+     * @return Account Object corresponding to GUI inputs
+     */
     @FXML
     Account depositButton() {
         if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getText() != null
@@ -565,6 +650,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * withdrawButton(): Method that generates an account to withdraw from depending on program inputs.
+     * Also handles errors.
+     * @return Account Object corresponding to GUI inputs
+     */
     @FXML
     Account withdrawButton() {
         if(!firstName1.getText().isEmpty() && !lastName1.getText().isEmpty() && dateOfBirth1.getText() != null){
@@ -584,14 +674,20 @@ public class TransactionManagerController {
         return null;
     }
 
+    /**
+     * setCustomerStatusYes(): method used to set up initial GUI
+     */
     @FXML
-    void setCustomerStatusYes(ActionEvent event) {
+    void setCustomerStatusYes() {
         loyalCustomerButton.setSelected(true);
         loyalCustomerButton.setDisable(true);
     }
 
+    /**
+     * clearOptions(): clears all options from being selected, and returns GUI to default settings
+     */
     @FXML
-    void clearOptions(ActionEvent event) {
+    void clearOptions() {
         firstName.setText("");
         lastName.setText("");
         dateOfBirth.setText("");
@@ -603,6 +699,12 @@ public class TransactionManagerController {
         tgAccountType1.selectToggle(null);
         tgLocation1.selectToggle(null);
     }
+
+    /**
+     * depositHelper(): Helper method that is used to create the account to deposit into
+     * @param a Date of Birth of to be generated account
+     * @return new Account object, or null if requirements aren't met
+     */
     private Account depositHelper(Date a){
         if(a.isValid().isEmpty()) {
             Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
@@ -630,6 +732,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * withdrawHelper(): Helper method that is used to create the account to withdraw from
+     * @param a Date of Birth of to be generated account
+     * @return new Account object, or null if requirements aren't met
+     */
     private Account withdrawHelper(Date a){
         if(a.isValid().isEmpty()) {
             Profile prof = new Profile(firstName1.getText(), lastName1.getText(),a);
@@ -657,6 +764,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * isValidDouble() check if the String contains double is valid
+     * @param input String contains double
+     * @return true if double is valid
+     */
     public static boolean isValidDouble(String input) {
         if (input == null) {
             return false;
@@ -668,9 +780,12 @@ public class TransactionManagerController {
             return false;
         }
     }
+    /**
+     * createDateFromString() method
+     * @param date String of date that contains month, day, year
+     * @return Date object if successful, null otherwise
+     */
     private Date createDateFromString(String date) { // need to catch exception wher e  integers cant beparsed
-        //Split date string into array contains month, day, year
-
         String[] dateArr = date.split("/");
         if(dateArr.length == 3) {
             if (isInteger(dateArr[0]) && isInteger(dateArr[1]) && isInteger(dateArr[2])) {
@@ -683,7 +798,11 @@ public class TransactionManagerController {
         //Create Date object and return
         return null;
     }
-
+    /**
+     * isInteger() check if the String can be parsed to int
+     * @param str String containing integer
+     * @return true if int is valid, false otherwise
+     */
     private boolean isInteger(String str) {
         try {
             Integer.parseInt(str);
@@ -692,6 +811,12 @@ public class TransactionManagerController {
             return false;
         }
     }
+
+    /**
+     * addCheck(): Helper method that creates Checking accounts for the open function.
+     * @param a date of birth that is part of account
+     * @return checking account if successful, null otherwise.
+     */
     private Account addCheck(Date a){
         if(a != null) {
             if (a.isValid().isEmpty()) {
@@ -713,7 +838,11 @@ public class TransactionManagerController {
         }
         return null;
     }
-
+    /**
+     * addCollegeCheck(): Helper method that creates CollegeChecking accounts for the open function.
+     * @param a date of birth that is part of account
+     * @return CollegeChecking account if successful, null otherwise.
+     */
     private Account addCollegeCheck(Date a){
         Campus campus = null;
         if(newarkButton.isSelected()){
@@ -746,6 +875,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * addSavings(): Helper method that creates Savings accounts for the open function.
+     * @param a date of birth that is part of account
+     * @return Savings account if successful, null otherwise.
+     */
     private Account addSavings(Date a){
         if(a != null) {
             if (a.isValid().isEmpty()) {
@@ -771,6 +905,11 @@ public class TransactionManagerController {
         }
         return null;
     }
+    /**
+     * addMM(): Helper method that creates MM accounts for the open function.
+     * @param a date of birth that is part of account
+     * @return MM account if successful, null otherwise.
+     */
     private Account addMM(Date a){
         if(a != null) {
             if (a.isValid().isEmpty()) {
@@ -796,11 +935,11 @@ public class TransactionManagerController {
         }
         return null;
     }
-
-
-
-
-
+    /**
+     * typeCheckCharacterReturn() checks type of account
+     * @param a Account object
+     * @return String that represents type of account
+     */
     public String typeCheckCharacterReturn(Account a){
         if(a.getClass() == Checking.class){
             return "(C)";
@@ -815,6 +954,12 @@ public class TransactionManagerController {
             return "(MM)";
         }
     }
+    /**
+     * Check if the account has checking or college checking
+     * @param a Account object
+     * @param ad AccountDatabase object
+     * @return true if the account is checking or college checking account
+     */
     public boolean checkIfCandCCExist(Account a, AccountDatabase ad){
         Account[] list = ad.getAccounts();
         if(list!=null) {
@@ -832,6 +977,13 @@ public class TransactionManagerController {
         }
         return false;
     }
+    /**
+     * checkWith(): Checks if withdrawal will make balance < 0, or if (bal-withdraw) - (amt from withdrawing
+     * more than 3 times) will make bal negative.
+     * @param ad main account database
+     * @param a account that holds the withdrawal amount
+     * @return false if unable to withdraw, true otherwise
+     */
     private boolean checkWith(AccountDatabase ad, Account a){
         Account[] list = ad.getAccounts();
         if(list != null) {
@@ -859,7 +1011,11 @@ public class TransactionManagerController {
         }
         return true;
     }
-
+    /**
+     * updateAccountForOperations() updates accounts before proceeding to operations
+     * @param a Account object
+     * @param ad AccountDatabase object
+     */
     private void updateAccountForOperations(Account a, AccountDatabase ad){
         Account[] list = ad.getAccounts();
         if(list != null) {
