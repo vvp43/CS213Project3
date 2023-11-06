@@ -143,6 +143,9 @@ public class TransactionManagerController {
     @FXML
     private ToggleGroup tgLocation1;
 
+    /**
+     * initialize(): Method that runs whenever main is run, and initializes all functionalities
+     */
     @FXML
     void initialize(){
         AccountDatabase accountDatabase = new AccountDatabase();

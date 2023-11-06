@@ -359,8 +359,8 @@ public class AccountDatabase {
 
         Checking john = new Checking(a, 1200);
 
-        System.out.println(test.open(john));
-        System.out.println(test.open(john));
+//        System.out.println(test.open(john));
+//        System.out.println(test.open(john));
 
 
 

@@ -76,10 +76,10 @@ public class CollegeChecking extends Checking {
         Date a = new Date (1776, 7, 7);
         Profile john = new Profile ("John", "johnson", a);
         CollegeChecking cc = new CollegeChecking(john, 5000, Campus.NEW_BRUNSWICK);
-        System.out.println(cc.getCampus());
-        System.out.println(cc.toString());
-        System.out.println(cc.monthlyFee());
-        System.out.println(cc.monthlyInterest());
+//        System.out.println(cc.getCampus());
+//        System.out.println(cc.toString());
+//        System.out.println(cc.monthlyFee());
+//        System.out.println(cc.monthlyInterest());
         cc.applyMonthlyInterestsAndFees();
 
     }
