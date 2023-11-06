@@ -32,6 +32,9 @@ public class TransactionManagerController {
     private TextField balance1;
 
     @FXML
+    private Button bankAccountsButton;
+
+    @FXML
     private RadioButton camdenButton;
 
     @FXML
@@ -87,7 +90,6 @@ public class TransactionManagerController {
 
     @FXML
     private CheckBox loyalCustomerButton;
-
 
     @FXML
     private RadioButton moneyMarketButtonClick;
@@ -168,6 +170,9 @@ public class TransactionManagerController {
         LoadAccountButton.setOnAction(event -> {
             handleLoadAccounts();
         });
+        bankAccountsButton.setOnAction(event -> {
+            handleLoadBankAccounts();
+        });
     }
     /**
      * handleLoadAccounts() method: handler method that creates fileChooser that looks for bankAccounts.txt,
@@ -184,8 +189,27 @@ public class TransactionManagerController {
 
         if (selectedFile != null) {
             try {
+                readAndProcessFile(selectedFile);
+            } catch (IOException ex) {
+                textArea.appendText("Error reading the file: " + ex.getMessage()+"\n");
+            }
+        } else {
+            textArea.appendText("No file selected.\n");
+        }
+    }
+    private void handleLoadBankAccounts() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files", "*.txt");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setInitialFileName("bankAccounts.txt"); // Set the default file name
+
+        Stage stage = (Stage) LoadAccountButton.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        if (selectedFile != null) {
+            try {
                 if (selectedFile.getName().equals("bankAccounts.txt")) {
-                    readAndProcessFile(selectedFile);
+                    readAndProcessBankAccounts(selectedFile);
                 } else {
                     textArea.appendText("Selected file is not named 'bankAccounts.txt'.\n");
                 }
@@ -208,9 +232,20 @@ public class TransactionManagerController {
     }
 
     /**
+     * isValidBankCommand() method checks if user's input is valid
+     * @param command user's input
+     * @return true if command is valid and false if command is invalid
+     */
+    public boolean isValidBankCommand(String command) {
+        return command.equals("CC") || command.equals("C") || command.equals("S")
+                || command.equals("MM");
+    }
+
+    /**
      * readAndProcessFile method: Reads from given file, line by line and processes each command and processes it through
      * the program, printing results to the textArea. Ends parsing if Q is entered.
-     * @param file file to read from (bankAccounts.txt)
+     * Mainly used for bug testing
+     * @param file file to read from (any .txt)
      * @throws IOException exception handler
      */
     private void readAndProcessFile(File file) throws IOException {
@@ -222,12 +257,81 @@ public class TransactionManagerController {
                     clearAll.fire();
                     String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split("\\s+");
                     String firstCMD = inputList[0];
+                    for (String ab : inputList){
+                        System.out.println(ab);
+                    }
                     if (!isValidCommand(firstCMD)) {
                         textArea.appendText("Invalid command!\n");
                     } else {
                         switchHelper(firstCMD, inputList);
                         clearAll.fire();
                     }
+                }
+            }
+        }
+    }
+    /**
+     * readAndProcessFile method: Reads from bankAccounts file, line by line and processes each account into program
+     * Returns invalid command if account is not recognized.
+     * @param file file to read from (bankAccounts.txt)
+     * @throws IOException exception handler
+     */
+    private void readAndProcessBankAccounts(File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int a = 0;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    clearAll.fire();
+                    String[] inputList = line.replaceAll("(^\\s+|\\s+$)", "").split(",");
+                    String firstCMD = inputList[0];
+                    if (!isValidBankCommand(firstCMD)) {
+                        textArea.appendText("Invalid command!\n");
+                    } else {
+                        bankSwitchHelper(firstCMD, inputList);
+                        clearAll.fire();
+                    }
+                }
+            }
+        }
+    }
+
+    private void bankSwitchHelper(String firstCMD, String[] inputList){
+        switch (firstCMD) {
+            case "C" -> {
+                if(inputList.length == 5){
+                    fillBankBlanks(inputList);
+                    checkingButtonClick.fire();
+                    openButton.fire();
+                }
+            }
+            case "CC" -> {
+                if(inputList.length == 6){
+                    fillBankBlanks(inputList);
+                    collegeCheckingButtonClick.fire();
+                    switch(inputList[5]){
+                        case "0"  -> newBrunswickButton.fire();
+                        case "1" -> newarkButton.fire();
+                        case "2" -> camdenButton.fire();
+                    }
+                    openButton.fire();
+                }
+            }
+            case "S" -> {
+                if(inputList.length == 6){
+                    fillBankBlanks(inputList);
+                    savingsButtonClick.fire();
+                    if (inputList[5].equals("0")) {
+                        loyalCustomerButton.fire();
+                    }
+                    openButton.fire();
+                }
+            }
+            case "MM" -> {
+                if(inputList.length == 6){
+                    fillBankBlanks(inputList);
+                    moneyMarketButtonClick.fire();
+                    openButton.fire();
                 }
             }
         }
@@ -266,7 +370,17 @@ public class TransactionManagerController {
             case "UB" -> printUpdatedButton.fire();
         }
     }
-
+    /**
+     * fillBankBlanks() method: Helper method to fill in data fields in order to prepare for opening accounts
+     * in bankAccounts.txt
+     * @param inputList command that was parsed from txt separated into an array.
+     */
+    private void fillBankBlanks(String[] inputList){
+        firstName.setText(inputList[1]);
+        lastName.setText(inputList[2]);
+        dateOfBirth.setText(inputList[3]);
+        balance.setText(inputList[4]);
+    }
     /**
      * fillBlanks() method: Helper method to fill in data fields in order to prepare for opening an account
      * @param inputList command that was parsed from txt separated into an array.
