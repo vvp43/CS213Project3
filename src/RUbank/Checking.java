@@ -10,8 +10,8 @@ import java.text.DecimalFormat;
 
 public class Checking extends Account {
     //constants
-    final double checkingMonthlyFee = 12.0;
-    final double checkingInterestRate = 0.01;
+    final double CHECKINGMONTHLYFEE = 12.0;
+    final double CHECKINGINTERESTRATE = 0.01;
 
     /**
      * monthlyInterest() method: overrides Account's method
@@ -19,7 +19,7 @@ public class Checking extends Account {
      */
     @Override
     public double monthlyInterest() {
-        return balance * (checkingInterestRate / 12);
+        return balance * (CHECKINGINTERESTRATE / 12);
         //return Double.parseDouble(df.format(balance * (checkingInterestRate / 12)));
     }
 
@@ -33,7 +33,7 @@ public class Checking extends Account {
             return 0;
         } else {
             //return Double.parseDouble(df.format(checkingMonthlyFee));
-            return checkingMonthlyFee;
+            return CHECKINGMONTHLYFEE;
         }
     }
 

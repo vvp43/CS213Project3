@@ -13,8 +13,8 @@ public class MoneyMarket extends Savings{
     private int withdrawal;
 
     //Constants
-    final double marketSavingsInterestRate = 0.045;
-    final double marketSavingsMonthlyFee= savingsMonthlyFee;
+    final double MARKETSAVINGSINTERESTRATE = 0.045;
+    final double MARKETSAVINGSMONTHLYFEE= SAVINGSMONTHLYFEE;
 
     /**
      * MoneyMarket Constructor
@@ -52,10 +52,10 @@ public class MoneyMarket extends Savings{
     @Override
     public double monthlyInterest() {
         if(isLoyal){
-            return balance*((marketSavingsInterestRate+0.0025)/12);
+            return balance*((MARKETSAVINGSINTERESTRATE+0.0025)/12);
         }
         else{
-            return balance*((marketSavingsInterestRate)/12);
+            return balance*((MARKETSAVINGSINTERESTRATE)/12);
         }
 
     }
@@ -87,7 +87,7 @@ public class MoneyMarket extends Savings{
         if (balance >= 2000) {
             return with;
         } else {
-            return with+marketSavingsMonthlyFee;
+            return with+MARKETSAVINGSMONTHLYFEE;
         }
     }
 

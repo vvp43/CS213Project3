@@ -13,8 +13,8 @@ public class Savings extends Account{
     protected boolean isLoyal; //loyal customer status
 
     //Constants
-    final double savingsMonthlyFee = 25;
-    final double savingsInterestRate = 0.04;
+    final double SAVINGSMONTHLYFEE = 25;
+    final double SAVINGSINTERESTRATE = 0.04;
 
     /**
      * Savings Constructor
@@ -54,10 +54,10 @@ public class Savings extends Account{
     public double monthlyInterest() {
         DecimalFormat df = new DecimalFormat("#0.00");
         if(isLoyal){
-            return balance*((savingsInterestRate+0.0025)/12);
+            return balance*((SAVINGSINTERESTRATE+0.0025)/12);
         }
         else{
-            return balance*((savingsInterestRate)/12);
+            return balance*((SAVINGSINTERESTRATE)/12);
         }
 
     }
@@ -71,7 +71,7 @@ public class Savings extends Account{
         if (balance >= 500) {
             return 0;
         } else {
-            return savingsMonthlyFee;
+            return SAVINGSMONTHLYFEE;
         }
     }
 
