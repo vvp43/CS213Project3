@@ -588,19 +588,21 @@ public class TransactionManagerController {
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
                 Account a = openAccountButton();
-                if(a.getClass() == CollegeChecking.class && a.holder.getDob().isUnder24()) {
-                    if (accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)) {
-                        textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " is already in the database.\n");
+                if(!a.holder.getDob().isUnder24()) {
+                    if (a.getClass() == CollegeChecking.class) {
+                        textArea.appendText("DOB invalid: " + a.holder.getDob().getMonth() + "/" + a.holder.getDob().getDay() + "/" + a.holder.getDob().getYear() + " over 24.\n");
+
                     } else {
-                        accountDatabase.open(a);
-                        //textArea.appendText(accountDatabase.printSorted()+"\n");
-                        textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " opened.\n");
-
+                        if (accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)) {
+                            textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " is already in the database.\n");
+                        } else {
+                            accountDatabase.open(a);
+                            //textArea.appendText(accountDatabase.printSorted()+"\n");
+                            textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " opened.\n");
+                        }
                     }
-                } else {
-                    textArea.appendText("DOB invalid: "+ a.holder.getDob().getMonth() + "/" + a.holder.getDob().getDay() + "/" + a.holder.getDob().getYear() + " over 24.\n");
-
                 }
+
             }
         });
     }
