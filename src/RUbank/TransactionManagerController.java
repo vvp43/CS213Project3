@@ -588,7 +588,7 @@ public class TransactionManagerController {
         openButton.setOnAction(event -> {
             if(openAccountButton() != null){
                 Account a = openAccountButton();
-                if(a.holder.getDob().isUnder24()) {
+                if(a.getClass() == CollegeChecking.class && a.holder.getDob().isUnder24()) {
                     if (accountDatabase.contains(a) || checkIfCandCCExist(a, accountDatabase)) {
                         textArea.appendText(a.holder.getFname() + " " + a.holder.getLname() + " " + a.holder.getDob().toString() + typeCheckCharacterReturn(a) + " is already in the database.\n");
                     } else {
